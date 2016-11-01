@@ -7,6 +7,7 @@
       "Properties": {
         "Path": "/service-role/",
         "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaRole",
           "arn:aws:iam::aws:policy/AWSLambdaExecute",
           "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
           "arn:aws:iam::aws:policy/AmazonVPCReadOnlyAccess"
@@ -26,6 +27,25 @@
             }
           ],
           "Version": "2012-10-17"
+        }
+      }
+    },
+    "LambdaAWSMap": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Description": "This function reads AWS services and builds a html map as output",
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole",
+            "Arn"
+          ]
+        },
+        "FunctionName": "AWS-html-map-service",
+        "Handler": "map.lambda_handler",
+        "Runtime": "python2.7",
+        "Code": {
+          "S3Bucket": "sdevenis-lambda",
+          "S3Key": "aws-looky-loo.zip"
         }
       }
     }
