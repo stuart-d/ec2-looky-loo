@@ -46,8 +46,9 @@ class HtmlDoc(object):
         soup = BeautifulSoup(payload, 'html.parser')
         return(soup.prettify())
 
-def lambda_handler(event,context):
+def lambda_handler(event,context,debug="false"):
     client = boto3.client('ec2')
+    azs = client.describe_availability_zones()
     vpcs = client.describe_vpcs()
 
     output = HtmlDoc()
@@ -59,11 +60,8 @@ def lambda_handler(event,context):
         output.add("</div>")
 
     output.add("</html>")
-
     body = output.render()
-    # print(output.render())
+    if debug == "true":
+        print (body)
     payload = { "statusCode": "200", "body": body }
     return(payload)
-
-    #output.set_label("default")
-    #print output.printout(label="stuart")
