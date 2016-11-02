@@ -39,7 +39,7 @@ class HtmlDoc(object):
             content = content + "\n"
         self.index[label].append(content)
 
-    def printout(self,label="default"):
+    def render(self,label="default"):
         payload = ""
         for key, data in enumerate(self.index[label]):
             payload = payload + data
@@ -57,10 +57,13 @@ def lambda_handler(event,context):
         line = str(vpc['VpcId']) + "<br>"
         output.add(line)
         output.add("</div>")
-    #output.add_table(["data",'data1'])
+
     output.add("</html>")
-    output.print_labels()
-    print(output.printout())
-    return(output.printout())
+
+    body = output.render()
+    # print(output.render())
+    payload = { "statusCode": "200", "body": body }
+    return(payload)
+
     #output.set_label("default")
     #print output.printout(label="stuart")
