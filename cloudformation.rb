@@ -33,7 +33,7 @@ CloudFormation do
 		DependsOn("LambdaExecutionRole")
 		Property("Description","This function reads AWS services and builds a html map as output")
 		Property("Role",FnGetAtt("LambdaExecutionRole","Arn"))
-		Property("FunctionName","AWS-html-map-service")
+		Property("FunctionName",lambda_function_name) # Note: lambda_function_name is not defined in this file, it needs to be passed as a -D
 		Property("Handler","map.lambda_handler")
 		Property("Runtime","python2.7")
 		Property("Code", S3Bucket:"sdevenis-lambda", S3Key:"aws-looky-loo.zip")
@@ -77,6 +77,16 @@ CloudFormation do
 		])
 		Property("ResourceId",FnGetAtt("RestAPI", "RootResourceId"))
 		Property("RestApiId", Ref("RestAPI"))
+	end
+
+	Resource("ApiGatewayToLambdaPermission") do
+		DependsOn("LambdaAWSMap")
+		Type("AWS::Lambda::Permission")
+		Property("Action","lambda:InvokeFunction")
+		Property("Principal","apigateway.amazonaws.com")
+		Property("FunctionName",lambda_function_name) # Note: lambda_function_name is not defined in this file, it needs to be passed as a -D
+
+
 	end
 
 	ApiGateway_Deployment("Deployment") do
