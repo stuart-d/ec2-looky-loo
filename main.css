@@ -1,0 +1,162 @@
+div.vpc {
+	border:2px solid;
+	float:left;
+	padding:10px;
+	width:99%;
+	font-family: helvetica;
+}
+
+div.ap-southeast-2a {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#FFFFCC;
+	padding:10px;
+	float:left;
+	width:32%;
+	font-family: helvetica;
+}
+
+div.ap-southeast-2b {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#FFFF77;
+	padding:10px;
+	float:left;
+	width:32%;
+	font-family: helvetica;
+}
+div.ap-southeast-2c {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#FFFF77;
+	padding:10px;
+	float:left;
+	width:32%;
+	font-family: helvetica;
+}
+
+div.subnet {
+	border:2px solid;
+	border-radius:25px;
+	background-color:white;
+	float:center;
+	padding:10px;
+	width:97%;
+	font-family: helvetica;
+}
+
+
+table.hosts {
+	border:0px;
+	width:99%;
+	border-collapse:collapse;
+	font-family: helvetica;
+}
+
+table.header {
+        border:0px;
+        width:99%;
+        border-collapse:collapse;
+        font-family: helvetica;
+}
+
+
+p.az_header {
+	font-weight:bold;
+	text-align:center;
+	font-family: helvetica;
+}
+
+p.subnet_header {
+	font-weight:bold;
+	text-align:center;
+	font-family: helvetica;
+}
+
+p.subnet_category_header {
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}
+
+p.header {
+        font-weight:bold;
+        text-align:left;
+        font-family: helvetica;
+}
+
+p {
+        font-weight:bold;
+        text-align:left;
+        font-family: helvetica;
+}
+
+
+
+p.vpc_header {
+	font-size:20px;
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}
+
+th {
+	background-color:grey;
+	color: white;
+	text-align:left;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+td {
+/*	background-color:#EEEEEE;
+ *	*/
+	text-align:left;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+td.header {
+/*      background-color:#EEEEEE;
+ *       *      */
+        text-align:left;
+        border: none;
+        font-family: helvetica;
+        font-size:15px;
+}
+
+
+td.version {
+	text-align:right;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+
+div.elb {
+	border:2px solid;
+	margin-left:auto;
+	margin-right:auto;
+	padding:10px;
+	width:70%;
+	font-family: helvetica;
+}
+
+
+table.elb {
+	border:0px;
+	width:99%;
+	border-collapse:collapse;
+	font-family: helvetica;
+
+}
+
+p.elb_header {
+	font-size:20px;
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}

@@ -8,6 +8,7 @@ CloudFormation do
 		Property("ManagedPolicyArns",["arn:aws:iam::aws:policy/service-role/AWSLambdaRole",
 			"arn:aws:iam::aws:policy/AWSLambdaExecute",
 			"arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+			"arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
 		"arn:aws:iam::aws:policy/AmazonVPCReadOnlyAccess"])
 		Property("AssumeRolePolicyDocument", {
 			"Statement" => [
@@ -94,4 +95,5 @@ CloudFormation do
 		Property("RestApiId", Ref("RestAPI"))
 		Property("StageName", "awshtml")
 	end
+
 end

@@ -10,8 +10,8 @@ lambda_code_zip = project_dir + "/" + tool_name + ".zip"
 required_python_pkgs = ["bs4"]
 
 task :default => [:help]
-task :install => [:cfn_create_stack,:lambda_update_running_code]
-task :updateall => [:cfn_update_stack,:lambda_update_running_code]
+task :install => [:cfn_create_stack,:lambda_update_running_code,:lambda_update_css]
+task :updateall => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
 task :updatecfn => [:cfn_update_stack]
 task :updatelambda => [:lambda_update_running_code]
 task :uninstall => [:delete_cfn_stack]
@@ -53,6 +53,10 @@ end
 
 task :lambda_update_running_code => [:lambda_create_code_zipfile] do
   run_cmds(["aws lambda update-function-code --function-name " +  lambda_function_name + " --zip fileb://" + lambda_code_zip])
+end
+
+task :lambda_update_css do
+  run_cmds(["aws s3 cp main.css s3://sdevenis-lambda/ --storage-class REDUCED_REDUNDANCY --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers"])
 end
 
 def run_cmds(commands)

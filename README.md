@@ -12,7 +12,7 @@ Built with Python, Lambda and API gateway
     clone
     rake install
 
-**Installation (to run locall or do development work)
+**Installation (to run locally or do development work)
 
     pip install awscli
     pip install boto3
@@ -27,6 +27,7 @@ Built with Python, Lambda and API gateway
 
 
 **Things to fix:
+* Host css in s3 and permision it open
 * Comments and file tidy up
 * The initial lambda creation requires a zip on S3, will replace with an inline placeholder
 * Modernise the way variables are injected into CFNDSL
