@@ -19,9 +19,9 @@ It was intended to help with troubleshooting environments and as a general visua
 
 The tool is deployed to AWS Lambda, S3 and API Gateway
 
-Lambda function is written in python
-CloudFormation defined with Ruby CFNDSL
-Build scripts configured with Ruby Rake
+* Lambda function is written in python
+* CloudFormation defined with Ruby CFNDSL
+* Build scripts configured with Ruby Rake
 
 ## How much does it cost to run?
 
@@ -31,10 +31,13 @@ It should run for less than $1 a month (possibly $0).
 
 Each time you load an ec2-looky-loo map, you incur:
 
-1 x HTTP GET against API Gateway (First 1 million requests per month are free in the first year)
-1 x Lambda invocation (First 1 million requests per month are free, note this is forever not just for the first 12 months)
-1 x HTTP GET S3 for the css file
-A small number (less than 10) calls to the "describe" AWS API's
+| Service       | What's used   | $ (Approx) |Notes
+| ------------- |:-------------:| ---------:|----------
+| API Gateway   | 1 x HTTP GET | $0     |First 1 million requests per month are free in the first year ()
+| Lambda      | 1 x invocation  |   $0     |First 1 million requests per month are free (ongoing)
+| S3 | 1 x HTTP GET for .css     |    $0      |
+| API | < 10 calls   |    $0      |API calls are free
+
 
 More details can be found here:
 
