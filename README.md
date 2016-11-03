@@ -27,27 +27,16 @@ The tool is deployed to AWS Lambda, S3 and API Gateway
 
 The tool deliberately uses an on demand, serverless architecture to keep costs minimal. It doesn't incur any "running costs", its more of a cost per invocation model.
 
-For most people this tool should incur a negligible cost on AWS (i.e. 1c a month)
+For most people this tool should incur a negligible cost on AWS (i.e. <5c a month)
 
-Assuming 100 page loads a day:
-
-Each time you load an ec2-looky-loo map, you incur:
+Monthly estimate assuming 100 page loads a day (and not considering free tier):
 
 | Service       | What's used   | $  |Notes
 | ------------- |:-------------:| ---------:|----------
-| API Gateway   | 3000 HTTP GET | $0     |
-| Lambda      | 3000 x invocations  |   $0     |First 1 million requests per month are free (ongoing)
-| S3 |  3000 HTTP GETs & 3K storage    |  $.01        |
-| API | < 10 calls   |    $0      |API calls are free
-
-
-More details can be found here:
-
-https://aws.amazon.com/lambda/pricing/
-https://aws.amazon.com/api-gateway/pricing/
-https://aws.amazon.com/s3/pricing/
-
-NOTE: Remember the AWS Free Tier!
+| API Gateway   | 3000 HTTP GET | $0.01     |https://aws.amazon.com/api-gateway/pricing/
+| Lambda      | 3000 x invocations  |   $0     |https://aws.amazon.com/lambda/pricing/
+| S3 |  3000 HTTP GETs & 3K storage    |  $0.01        |https://aws.amazon.com/s3/pricing/
+| API | ~ 30K calls   |    $0      |API calls are free
 
 ## Installation (if you just want to run it on AWS):
 
