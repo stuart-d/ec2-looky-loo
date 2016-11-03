@@ -32,7 +32,7 @@ For most people this tool should incur a negligible cost on AWS (i.e. <5c a mont
 Monthly estimate assuming 100 page loads a day (and not considering free tier):
 
 | Service       | What's used   | $  |Notes
-| ------------- |:-------------:| ---------:|----------
+| ------------- |-------------| ---------:|----------
 | API Gateway   | 3000 HTTP GET | $0.01     |https://aws.amazon.com/api-gateway/pricing/
 | Lambda      | 3000 x invocations  |   $0     |https://aws.amazon.com/lambda/pricing/
 | S3 |  3000 HTTP GETs & 3K storage    |  $0.01        |https://aws.amazon.com/s3/pricing/
