@@ -49,6 +49,11 @@ class HtmlDoc(object):
         #return(soup.prettify())
 
 def lambda_handler(event,context,debug="false"):
+
+    tool_name ="EC2 Map (aws-looky-loo)"
+    tool_location = "https://github.com/stuart-d/aws-looky-loo"
+    tool_version ="0.9"
+
     client = boto3.client('ec2')
     ec2 = boto3.resource('ec2')
     instances = ec2.instances.all()

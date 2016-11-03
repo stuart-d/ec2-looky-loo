@@ -1,11 +1,11 @@
 # This rakefile builds
 
 project_dir = Dir.pwd
-tool_name = "aws-looky-loo"
-cfn_stack_name = "aws-looky-loo"
+tool_name = "ec2-looky-loo"
+cfn_stack_name = "ec2-looky-loo"
 cfndsl_rb = "cloudformation.rb"
 cfndsl_template = "cloudformation.template"
-lambda_function_name = "aws-looky-loo"
+lambda_function_name = "ec2-looky-loo"
 lambda_code_zip = project_dir + "/" + tool_name + ".zip"
 required_python_pkgs = ["bs4"]
 
