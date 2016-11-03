@@ -19,7 +19,7 @@ CloudFormation do
 					"Effect"    => "Allow",
 					"Principal" => {
 						"Service" => [
-							"lambda.amazonaws.com","apigateway.amazonaws.com"
+							"lambda.amazonaws.com"
 						]
 					}
 				}

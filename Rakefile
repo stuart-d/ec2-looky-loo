@@ -1,14 +1,19 @@
-# This rakefile builds
+# Use this rakefil to manage ec2-looky-loo
 
-project_dir = Dir.pwd
+# Variables you may want to change
 tool_name = "ec2-looky-loo"
-cfn_stack_name = "ec2-looky-loo"
+cfn_stack_name = tool_name
+lambda_function_name = tool_name
+lambda_css_s3_bucket="s3://sdevenis-lambda/" # Ensure you keep this format with s3:// prefix and / suffix
+
+# Variables you probably won't change
+project_dir = Dir.pwd
 cfndsl_rb = "cloudformation.rb"
 cfndsl_template = "cloudformation.template"
-lambda_function_name = "ec2-looky-loo"
 lambda_code_zip = project_dir + "/" + tool_name + ".zip"
 required_python_pkgs = ["bs4"]
 
+# Main tasks
 task :default => [:help]
 task :install => [:cfn_create_stack,:lambda_update_running_code,:lambda_update_css]
 task :updateall => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
@@ -56,7 +61,7 @@ task :lambda_update_running_code => [:lambda_create_code_zipfile] do
 end
 
 task :lambda_update_css do
-  run_cmds(["aws s3 cp main.css s3://sdevenis-lambda/ --storage-class REDUCED_REDUNDANCY --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers"])
+  run_cmds(["aws s3 cp main.css " + lambda_css_s3_bucket +" --storage-class REDUCED_REDUNDANCY --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers"])
 end
 
 def run_cmds(commands)

@@ -50,9 +50,9 @@ class HtmlDoc(object):
 
 def lambda_handler(event,context,debug="false"):
 
-    tool_name ="EC2 Map (aws-looky-loo)"
-    tool_location = "https://github.com/stuart-d/aws-looky-loo"
-    tool_version ="0.9"
+    tool_name ="EC2-looky-loo"
+    tool_location = "https://github.com/stuart-d/ec2-looky-loo"
+    tool_version ="0.6"
 
     client = boto3.client('ec2')
     ec2 = boto3.resource('ec2')
@@ -68,6 +68,8 @@ def lambda_handler(event,context,debug="false"):
     output.add('<!DOCTYPE html>')
     output.add('<html>')
     output.add('<head> <link rel="stylesheet" type="text/css" href="https://sdevenis-lambda.s3.amazonaws.com/main.css"> </head>')
+    output.add('<p style="tool_header">' + tool_name + '</p>')
+    output.add('<p> Version: <a href="' + tool_location + '">' + tool_version + '</a></p>')
 
     for vpc in vpcs['Vpcs']:
         output.add("<div class=\"vpc\">")

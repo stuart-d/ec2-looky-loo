@@ -83,18 +83,18 @@ p.subnet_category_header {
 	font-family: helvetica;
 }
 
-p.header {
-        font-weight:bold;
-        text-align:left;
-        font-family: helvetica;
+p.tool_header {
+	font-size:40px;
+  font-weight:bold;
+  text-align:left;
+  font-family: helvetica;
 }
 
 p {
-        font-weight:bold;
-        text-align:left;
-        font-family: helvetica;
+  font-weight:bold;
+  text-align:left;
+  font-family: helvetica;
 }
-
 
 
 p.vpc_header {
