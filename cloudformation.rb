@@ -37,6 +37,7 @@ CloudFormation do
 		Property("FunctionName",lambda_function_name) # Note: lambda_function_name is not defined in this file, it needs to be passed as a -D
 		Property("Handler","map.lambda_handler")
 		Property("Runtime","python2.7")
+		Property("Timeout","30")
 		Property("Code", S3Bucket:"sdevenis-lambda", S3Key:"aws-looky-loo.zip")
 	end
 

@@ -28,6 +28,7 @@ Built with Python, Lambda and API gateway
 
 **Things to fix:
 * Host css in s3 and permision it open
+* Add main route tables
 * Comments and file tidy up
 * The initial lambda creation requires a zip on S3, will replace with an inline placeholder
 * Modernise the way variables are injected into CFNDSL

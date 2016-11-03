@@ -1,5 +1,6 @@
 from __future__ import print_function
 import boto3
+import re
 from bs4 import BeautifulSoup
 
 class HtmlDoc(object):
@@ -49,12 +50,16 @@ class HtmlDoc(object):
 
 def lambda_handler(event,context,debug="false"):
     client = boto3.client('ec2')
+    ec2 = boto3.resource('ec2')
+    instances = ec2.instances.all()
     azs = client.describe_availability_zones()
     vpcs = client.describe_vpcs()
     subnets = client.describe_subnets()
     routetables = client.describe_route_tables()
+    networkacls = client.describe_network_acls()
 
     output = HtmlDoc()
+
     output.add('<!DOCTYPE html>')
     output.add('<html>')
     output.add('<head> <link rel="stylesheet" type="text/css" href="https://sdevenis-lambda.s3.amazonaws.com/main.css"> </head>')
@@ -72,13 +77,15 @@ def lambda_handler(event,context,debug="false"):
             for subnet in subnets['Subnets']:
                 if subnet['VpcId'] == vpc['VpcId'] and subnet['AvailabilityZone'] == az_name:
                     output.add("<div class=\"subnet\">")
-                    output.add("<p class=\"az_header\">" +  subnet['CidrBlock'] + "  [" + subnet['SubnetId'] + "]<br>")
+                    output.add("<p class=\"az_header\">" +  subnet['SubnetId'] + "  [" + subnet['CidrBlock'] + "]<br>")
 
+                    # Begin Route Tables
+                    output.add("<p class=\"subnet_category_header\">Route Tables</p>")
                     for routetable in routetables['RouteTables']:
-
                         for association in routetable['Associations']:
 
                             if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
+
                                 output.add(association['RouteTableId'] + "<br>")
                                 output.add('<table class="hosts">')
                                 output.add_table(["Dest CIDR","GW"],type="header")
@@ -92,11 +99,70 @@ def lambda_handler(event,context,debug="false"):
                                     output.add_table([route['DestinationCidrBlock'],gw])
                                 output.add('</table>')
 
-                    output.add("</div>")
+                    # Begin Network ACLs
+                    output.add("<p class=\"subnet_category_header\">Network ACLs</p>")
+                    for networkacl in networkacls['NetworkAcls']:
+                        for aclassociation in networkacl['Associations']:
+                            if aclassociation['SubnetId'] == subnet['SubnetId']:
+                                output.add(networkacl['NetworkAclId'])
+                                output.add("<table class=\"hosts\">")
+                                output.add_table(['Rule','Protocol','Ports','RuleAction','Egress','CidrBlock'],type="header")
 
-            output.add("</div>")
+                                for entry in networkacl['Entries']:
+                                  rule_number = str(entry['RuleNumber'])
+                                  rule_action = str(entry['RuleAction'])
+                                  cidr = str(entry['CidrBlock'])
 
-        output.add("</div>")
+                                  port_range = "all"
+                                  if 'PortRange' in entry:
+                                      ports_from = str(entry['PortRange']['From'])
+                                      ports_to = str(entry['PortRange']['To'])
+                                      port_range = ports_from + "-" + ports_to
+
+                                  direction = "ingress"
+                                  if entry['Egress'] == True:
+                                      direction == "egress"
+                                      protocol = entry['Protocol']
+                                      protocol = re.sub("-1","all",protocol)
+                                      protocol = re.sub("6","tcp",protocol)
+                                      output.add_table([rule_number,protocol,port_range,rule_action,direction,cidr])
+                                output.add("</table>")
+
+
+                    # Begin EC2 instaces
+                    output.add("<p class=\"subnet_category_header\">EC2 Instances</p>")
+                    output.add("<table class=\"hosts\">\n")
+                    output.add_table(["Name","State","Type","Address","Security Groups","Platform"],type="header")
+                    for i in instances:
+                        for interface in i.network_interfaces_attribute:
+                            if interface['SubnetId'] == subnet['SubnetId']:
+
+                                name = "-"
+                                for tag in i.tags:
+                                    if tag['Key'] == 'Name':
+                                        name = tag['Value']
+
+                                state = i.state['Name']
+                                instance_type = i.instance_type
+
+                                address = interface['PrivateIpAddress']
+
+                                groups = ""
+                                for group in interface['Groups']:
+                                    groups = groups + group['GroupId']
+
+                                platform = "linux"
+                                if i.platform:
+                                    platform = i.platform
+
+                                output.add_table([name,state,instance_type,address,groups,platform])
+                    output.add("</table>")
+
+                    output.add("</div><p>") # close Subnet div
+
+            output.add("</div>") # close AvailabilityZone div
+
+        output.add("</div>") # close VPC div
 
     output.add("</html>")
 

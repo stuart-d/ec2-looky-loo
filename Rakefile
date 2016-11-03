@@ -12,8 +12,7 @@ required_python_pkgs = ["bs4"]
 task :default => [:help]
 task :install => [:cfn_create_stack,:lambda_update_running_code,:lambda_update_css]
 task :updateall => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
-task :updatecfn => [:cfn_update_stack]
-task :updatelambda => [:lambda_update_running_code]
+task :updatelambda => [:lambda_update_running_code,:lambda_update_css]
 task :uninstall => [:delete_cfn_stack]
 
 task :cfn_generate do
@@ -30,6 +29,7 @@ task :lambda_create_code_zipfile do
   required_python_pkgs.each { |package|
     run_cmds(["zip -r9 " + lambda_code_zip + " ./" + package])
   }
+  Dir.chdir (project_dir)
 end
 
 task :help do
