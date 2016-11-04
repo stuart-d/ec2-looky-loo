@@ -46,6 +46,8 @@ Monthly estimate assuming 100 page loads a day (and not considering free tier):
     vim Rakefile # Edit variables
     rake install
 
+*Note: You will need the appropriate AWS permissions to create all the resources*    
+
 ## Installation (to run locally or do development work)
 
     git clone
@@ -58,7 +60,10 @@ Monthly estimate assuming 100 page loads a day (and not considering free tier):
     rake install # Install to AWS
     python -c 'import map; map.lambda_handler("","",debug="true")' # to run locally
 
+*Note: You will need the appropriate AWS permissions to create all the resources*    
+
 ## Things to fix and issues:
+* Installation sanity checks on s3 bucket and permissions
 * Add outputs to cloudformation for the http endpoint
 * Add main route tables to routes section (currently only explicitly associated routes)
 * The initial lambda creation requires a zip on S3, will replace with an inline placeholder

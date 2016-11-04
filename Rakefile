@@ -15,6 +15,7 @@ required_python_pkgs = ["bs4"]
 
 # Main tasks
 task :default => [:help]
+task :test => [:help]
 task :install => [:cfn_create_stack,:lambda_update_running_code,:lambda_update_css]
 task :updateall => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
 task :updatelambda => [:lambda_update_running_code,:lambda_update_css]
@@ -66,9 +67,12 @@ end
 
 def run_cmds(commands)
   commands.each { |cmd|
-  print ("Running: " + cmd + "\n")
-  print ("----- Begin output ------\n")
-  system(cmd)
-  print ("----- End output ------\n")
+    print ("Running: " + cmd + "\n")
+    print ("----- Begin output ------\n")
+    system(cmd)
+    print ("----- End output ------\n")
+    if $? != 0
+      print ("Command failed, exit code was" + $?.exitstatus)
+    end
   }
 end
