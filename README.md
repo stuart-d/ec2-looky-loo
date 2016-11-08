@@ -10,6 +10,12 @@ It was intended to help with troubleshooting environments and as a general visua
 
 ![Screenshot](/images/example.png)
 
+## How does it work?
+
+The architecture is as follows:
+
+![Architecture](/images/diagram.png)
+
 ## What services does it show?
 * VPC and Availability zones
 * Network ACL's
