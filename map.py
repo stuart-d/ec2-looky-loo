@@ -22,10 +22,10 @@ class HtmlDoc(object):
         if not isinstance(content,list):
             return("error: not a list")
 
-        element_open_tag = "<td>"
+        element_open_tag = "<td class=" + style + ">"
         element_close_tag = "</td>"
         if type == "header":
-            element_open_tag = "<th>"
+            element_open_tag = "<th class=" + style + ">"
             element_close_tag = "</th>"
 
         payload = "<tr>"
@@ -85,13 +85,24 @@ def lambda_handler(event,context,debug="false"):
                 if subnet['VpcId'] == vpc['VpcId'] and subnet['AvailabilityZone'] == az_name:
                     output.add("<div class=\"subnet\">")
                     output.add("<p class=\"az_header\">" +  subnet['SubnetId'] + "  [" + subnet['CidrBlock'] + "]<br>")
+                    print (subnet)
+                    if 'Tags' in subnet.keys():
+                        output.add('<table class="tags">')
+                        for tag in subnet['Tags']:
+                            output.add_table([tag['Key'],tag['Value']],style="tags")
+                        output.add('</table>')
+
 
                     # Begin Route Tables
                     output.add("<p class=\"subnet_category_header\">Route Tables</p>")
                     for routetable in routetables['RouteTables']:
+                        attached_route_table = ""
+                        print (routetables)
                         for association in routetable['Associations']:
 
                             if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
+
+                                attached_route_table = association['RouteTableId']
 
                                 output.add(association['RouteTableId'] + "<br>")
                                 output.add('<table class="hosts">')
