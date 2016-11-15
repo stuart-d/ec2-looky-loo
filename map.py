@@ -74,6 +74,11 @@ def lambda_handler(event,context,debug="false"):
     for vpc in vpcs['Vpcs']:
         output.add("<div class=\"vpc\">")
         line = str(vpc['VpcId']) + "<br>"
+        if 'Tags' in vpc.keys():
+            output.add('<table class="tags">')
+            for tag in vpc['Tags']:
+                output.add_table([tag['Key'],tag['Value']],style="tags")
+            output.add('</table>')
         output.add(line)
 
         for az in azs['AvailabilityZones']:
