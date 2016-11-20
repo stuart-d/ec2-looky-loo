@@ -52,7 +52,7 @@ def lambda_handler(event,context,debug="false"):
 
     tool_name ="EC2-looky-loo"
     tool_location = "https://github.com/stuart-d/ec2-looky-loo"
-    tool_version ="0.6"
+    tool_version ="0.7"
 
     client = boto3.client('ec2')
     ec2 = boto3.resource('ec2')

@@ -15,10 +15,15 @@ required_python_pkgs = ["bs4"]
 
 # Main tasks
 task :default => [:help]
-task :test => [:help]
+desc "Install ec2-looky-loo"
 task :install => [:cfn_create_stack,:lambda_update_running_code,:lambda_update_css]
-task :updateall => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
-task :updatelambda => [:lambda_update_running_code,:lambda_update_css]
+desc "Update entire stack including code and css"
+task :update_all => [:cfn_update_stack,:lambda_update_running_code,:lambda_update_css]
+desc "Update lambda and css"
+task :update_lambda => [:lambda_update_running_code,:lambda_update_css]
+desc "Show current stack (including URL of deployment)"
+task :display => [:display_cfn_stack]
+desc "Uninstall everything"
 task :uninstall => [:delete_cfn_stack]
 
 task :cfn_generate do
@@ -57,8 +62,16 @@ task :delete_cfn_stack do
             "aws cloudformation wait stack-delete-complete --stack-name " + cfn_stack_name])
 end
 
+task :display_cfn_stack do
+  run_cmds(["aws cloudformation describe-stacks --stack-name " + cfn_stack_name])
+end
+
 task :lambda_update_running_code => [:lambda_create_code_zipfile] do
   run_cmds(["aws lambda update-function-code --function-name " +  lambda_function_name + " --zip fileb://" + lambda_code_zip])
+end
+
+task :lambda_update_s3_code => [:lambda_create_code_zipfile] do
+  run_cmds(["aws s3 cp " + lambda_code_zip + " " + lambda_css_s3_bucket] +" --storage-class REDUCED_REDUNDANCY")
 end
 
 task :lambda_update_css do
@@ -71,8 +84,8 @@ def run_cmds(commands)
     print ("----- Begin output ------\n")
     system(cmd)
     print ("----- End output ------\n")
-    if $? != 0
-      print ("Command failed, exit code was" + $?.exitstatus)
-    end
+#    if $? != 0
+#      print ("Command failed, exit code was" + $?.exitstatus)
+#    end
   }
 end

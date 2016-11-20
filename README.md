@@ -69,10 +69,11 @@ Monthly estimate assuming 100 page loads a day (and not considering free tier):
 *Note: You will need the appropriate AWS permissions to create all the resources*    
 
 ## Things to fix and issues:
+* Add RDS support
+* Add NAT / IGW support
+* Add ECS
 * Installation sanity checks on s3 bucket and permissions
-* Add outputs to cloudformation for the http endpoint
 * Add main route tables to routes section (currently only explicitly associated routes)
-* The initial lambda creation requires a zip on S3, will replace with an inline placeholder
-* Ensure all componenets are removed on uninstall (css file)
+* Ensure all components are removed on uninstall (css file)
 * Modernise the way variables are injected into CFNDSL
 * Fix variable injection into main file

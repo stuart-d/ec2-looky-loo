@@ -38,6 +38,7 @@ CloudFormation do
 		Property("Handler","map.lambda_handler")
 		Property("Runtime","python2.7")
 		Property("Timeout","30")
+		# Code length is too long - Property("Code", { "ZipFile" => FnFormat( File.read("map.py"))})
 		Property("Code", S3Bucket:"sdevenis-lambda", S3Key:"aws-looky-loo.zip")
 	end
 
@@ -91,10 +92,27 @@ CloudFormation do
 
 	end
 
-	ApiGateway_Deployment("Deployment") do
-		DependsOn(["MethodRootGET"])
-		Property("RestApiId", Ref("RestAPI"))
-		Property("StageName", "awshtml")
+	#ApiGateway_Deployment("Deployment") do
+	#	DependsOn(["MethodRootGET"])
+	#	Property("RestApiId", Ref("RestAPI"))
+	#	Property("StageName", "prod")
+	#end
+
+	#Output("ApiId") do
+	#	Description("RestAPI ID")
+	#	Value(Ref("RestAPI"))
+	#end
+	#	Output("Test") do
+	#		Description("RootResourceId")
+	#		Value(Ref(FnGetAtt("RestAPI","RootResourceId")))
+	#	end
+	#Output("Deployment") do
+	#	Description("RestAPI ID")
+	#	Value(Ref("Deployment"))
+	#end
+	Output("URL") do
+		Description("The URL to access ec2-looky-loo")
+		Value(FnJoin("",["https://",Ref("RestAPI"),".execute-api.ap-southeast-2.amazonaws.com/prod"]))
 	end
 
 end
