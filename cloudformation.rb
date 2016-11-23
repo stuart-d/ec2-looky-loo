@@ -40,6 +40,7 @@ CloudFormation do
 		Property("Timeout","30")
 		# Code length is too long - Property("Code", { "ZipFile" => FnFormat( File.read("map.py"))})
 		Property("Code", S3Bucket:"sdevenis-lambda", S3Key:"aws-looky-loo.zip")
+		#Property("Code", S3Bucket:"4717-0977-7059-ec2-looky-loo", S3Key:"ec2-looky-loo.zip")
 	end
 
 
@@ -88,15 +89,13 @@ CloudFormation do
 		Property("Action","lambda:InvokeFunction")
 		Property("Principal","apigateway.amazonaws.com")
 		Property("FunctionName",lambda_function_name) # Note: lambda_function_name is not defined in this file, it needs to be passed as a -D
-
-
 	end
 
-	#ApiGateway_Deployment("Deployment") do
-	#	DependsOn(["MethodRootGET"])
-	#	Property("RestApiId", Ref("RestAPI"))
-	#	Property("StageName", "prod")
-	#end
+	ApiGateway_Deployment("Deployment") do
+		DependsOn(["MethodRootGET"])
+		Property("RestApiId", Ref("RestAPI"))
+		Property("StageName", "prod")
+	end
 
 	#Output("ApiId") do
 	#	Description("RestAPI ID")

@@ -69,11 +69,12 @@ Monthly estimate assuming 100 page loads a day (and not considering free tier):
 *Note: You will need the appropriate AWS permissions to create all the resources*    
 
 ## Things to fix and issues:
+* TOTALLY DOESN'T WORK ON WINDOWS YET!
 * Add RDS support
 * Add NAT / IGW support
 * Add ECS
+* Fix installation to support different accounts and profiles
 * Installation sanity checks on s3 bucket and permissions
-* Add main route tables to routes section (currently only explicitly associated routes)
 * Ensure all components are removed on uninstall (css file)
 * Modernise the way variables are injected into CFNDSL
 * Fix variable injection into main file

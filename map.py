@@ -52,7 +52,7 @@ def lambda_handler(event,context,debug="false"):
 
     tool_name ="EC2-looky-loo"
     tool_location = "https://github.com/stuart-d/ec2-looky-loo"
-    tool_version ="0.7"
+    tool_version ="0.8"
 
     client = boto3.client('ec2')
     ec2 = boto3.resource('ec2')
@@ -77,7 +77,7 @@ def lambda_handler(event,context,debug="false"):
         output.add(line)
         if 'Tags' in vpc.keys():
             output.add('<table class="tags">')
-            for tag in vpc['Tags']:
+            for tag in sorted(vpc['Tags']):
                 output.add_table([tag['Key'],tag['Value']],style="tags")
             output.add('</table>')
 
@@ -93,34 +93,55 @@ def lambda_handler(event,context,debug="false"):
                     print (subnet)
                     if 'Tags' in subnet.keys():
                         output.add('<table class="tags">')
-                        for tag in subnet['Tags']:
+                        for tag in sorted(subnet['Tags']):
                             output.add_table([tag['Key'],tag['Value']],style="tags")
                         output.add('</table>')
 
 
                     # Begin Route Tables
                     output.add("<p class=\"subnet_category_header\">Route Tables</p>")
+
+
+                    attached_route_table = False
                     for routetable in routetables['RouteTables']:
-                        attached_route_table = ""
-                        print (routetables)
-                        for association in routetable['Associations']:
-
-                            if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
-
-                                attached_route_table = association['RouteTableId']
-
-                                output.add(association['RouteTableId'] + "<br>")
-                                output.add('<table class="hosts">')
-                                output.add_table(["Dest CIDR","GW"],type="header")
-
-                                for route in routetable['Routes']:
-                                    gw = "-"
-                                    if "GatewayId" in route.keys():
-                                        gw = route['GatewayId']
-                                    if "NatGatewayId" in route.keys():
-                                        gw = route['NatGatewayId']
+                        if routetable['VpcId'] == vpc['VpcId']:
+                            for association in routetable['Associations']:
+                                if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
+                                    attached_route_table = True
+                                    output.add(association['RouteTableId'] + "<br>")
+                                    output.add('<table class="hosts">')
+                                    output.add_table(["Dest CIDR","GW"],type="header")
+                                    for route in routetable['Routes']:
+                                        gw = "-"
+                                        if "GatewayId" in route.keys():
+                                            gw = route['GatewayId']
+                                        if "NatGatewayId" in route.keys():
+                                            gw = route['NatGatewayId']
                                     output.add_table([route['DestinationCidrBlock'],gw])
-                                output.add('</table>')
+                                    output.add('</table>')
+
+                    if attached_route_table == False:
+                        for routetable in routetables['RouteTables']:
+                            if routetable['VpcId'] == vpc['VpcId']:
+                                for association in routetable['Associations']:
+                                    if association["Main"]:
+                                        output.add(association['RouteTableId'] + " (main)<br>")
+                                        output.add('<table class="hosts">')
+                                        output.add_table(["Dest CIDR","GW"],type="header")
+                                        for route in routetable['Routes']:
+                                            gw = "-"
+                                            if "GatewayId" in route.keys():
+                                                gw = route['GatewayId']
+                                            if "NatGatewayId" in route.keys():
+                                                gw = route['NatGatewayId']
+                                        output.add_table([route['DestinationCidrBlock'],gw])
+                                        output.add('</table>')
+
+
+#                            attached_route_table = association['RouteTableId']
+
+
+
 
                     # Begin Network ACLs
                     output.add("<p class=\"subnet_category_header\">Network ACLs</p>")
