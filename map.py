@@ -182,9 +182,10 @@ def lambda_handler(event,context,debug="false"):
                             if interface['SubnetId'] == subnet['SubnetId']:
 
                                 name = "-"
-                                for tag in i.tags:
-                                    if tag['Key'] == 'Name':
-                                        name = tag['Value']
+                                if i.tags:
+                                    for tag in i.tags:
+                                        if tag['Key'] == 'Name':
+                                            name = tag['Value']
 
                                 state = i.state['Name']
                                 instance_type = i.instance_type
