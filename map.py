@@ -1,22 +1,28 @@
 from __future__ import print_function
 import boto3
 import re
-from bs4 import BeautifulSoup
+import time
+#from bs4 import BeautifulSoup
 
+# This class provides a simple framework for structring the html output
+# It maintains a index of label names, which can be appended to or rendedered
 class HtmlDoc(object):
     def __init__(self):
         self.index = dict()
         self.set_label()
 
+    # Print the curent labels (debugging)
     def print_labels(self):
         for label in self.index.iterkeys():
             print (label)
 
+    # Set the label
     def set_label(self,label="default"):
         if label not in self.index:
             self.index[label] = []
         self.label = label
 
+    # Bit of boilerplate for creating tables
     def add_table(self,content,type="row",style=""):
         label = self.label
         if not isinstance(content,list):
@@ -34,6 +40,7 @@ class HtmlDoc(object):
         payload = payload + "</tr>\n"
         self.index[label].append(payload)
 
+    # Adds content to the current label
     def add(self,content,type="line"):
         label = self.label
         if type == "line":
@@ -44,24 +51,28 @@ class HtmlDoc(object):
         payload = ""
         for key, data in enumerate(self.index[label]):
             payload = payload + data
-        soup = BeautifulSoup(payload, 'html.parser')
+        #soup = BeautifulSoup(payload, 'html.parser')
         return(payload)
         #return(soup.prettify())
 
 def lambda_handler(event,context,debug="false"):
 
-    tool_name ="EC2-looky-loo"
+    tool_name ="Application Infrastructure CNS AWS NonProd"
     tool_location = "https://github.com/stuart-d/ec2-looky-loo"
-    tool_version ="0.8"
+    tool_run_time = time.strftime("%d-%m-%Y %H:%M")
 
-    client = boto3.client('ec2')
-    ec2 = boto3.resource('ec2')
-    instances = ec2.instances.all()
+    # Need to have your profile configured in ~/.aws/config
+    session = boto3.Session(profile_name='nonprod')
+
+    client = session.client('ec2')
     azs = client.describe_availability_zones()
     vpcs = client.describe_vpcs()
     subnets = client.describe_subnets()
     routetables = client.describe_route_tables()
     networkacls = client.describe_network_acls()
+
+    ec2 = session.resource('ec2')
+    instances = ec2.instances.all()
 
     output = HtmlDoc()
 
@@ -69,7 +80,7 @@ def lambda_handler(event,context,debug="false"):
     output.add('<html>')
     output.add('<head> <link rel="stylesheet" type="text/css" href="https://sdevenis-lambda.s3.amazonaws.com/main.css"> </head>')
     output.add('<p style="tool_header">' + tool_name + '</p>')
-    output.add('<p> Version: <a href="' + tool_location + '">' + tool_version + '</a></p>')
+    output.add('<p> Generated: ' + tool_run_time + '</p>')
 
     for vpc in vpcs['Vpcs']:
         output.add("<div class=\"vpc\">")
@@ -88,60 +99,56 @@ def lambda_handler(event,context,debug="false"):
 
             for subnet in subnets['Subnets']:
                 if subnet['VpcId'] == vpc['VpcId'] and subnet['AvailabilityZone'] == az_name:
-                    output.add("<div class=\"subnet\">")
+
+                    # Check what classification this subnet is
+                    subnet_class = "subnet"
+                    zone = "unknown"
+                    if 'Tags' in subnet.keys():
+                        for tag in sorted(subnet['Tags']):
+                            if tag['Key'] == "Zone2ZoneName":
+                                zone =  tag['Value']
+                                subnet_class = "subnet-" + zone
+
+
+                    output.add("<div class=" + subnet_class + ">")
                     output.add("<p class=\"az_header\">" +  subnet['SubnetId'] + "  [" + subnet['CidrBlock'] + "]<br>")
-                    print (subnet)
                     if 'Tags' in subnet.keys():
                         output.add('<table class="tags">')
                         for tag in sorted(subnet['Tags']):
                             output.add_table([tag['Key'],tag['Value']],style="tags")
-                        output.add('</table>')
-
+                        output.add("</table>")
 
                     # Begin Route Tables
                     output.add("<p class=\"subnet_category_header\">Route Tables</p>")
 
-
-                    attached_route_table = False
+#                    print ("---")
+#                    print (routetables)
+#                    print ("---")
                     for routetable in routetables['RouteTables']:
-                        if routetable['VpcId'] == vpc['VpcId']:
-                            for association in routetable['Associations']:
-                                if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
-                                    attached_route_table = True
-                                    output.add(association['RouteTableId'] + "<br>")
-                                    output.add('<table class="hosts">')
-                                    output.add_table(["Dest CIDR","GW"],type="header")
-                                    for route in routetable['Routes']:
-                                        gw = "-"
-                                        if "GatewayId" in route.keys():
-                                            gw = route['GatewayId']
-                                        if "NatGatewayId" in route.keys():
-                                            gw = route['NatGatewayId']
-                                    output.add_table([route['DestinationCidrBlock'],gw])
-                                    output.add('</table>')
+                        for association in routetable['Associations']:
+                            if "SubnetId" in association.keys() and association['SubnetId'] == subnet['SubnetId']:
+                               attached_route_table = True
+                               output.add(association['RouteTableId'] + "<br>")
+                               output.add('<table class="hosts">')
+                               output.add_table(["Destination","GW","Detail"],type="header")
+                               for route in routetable['Routes']:
+                                   gw = "-"
+                                   destination = "-"
+                                   detail = "-"
+                                   if "GatewayId" in route.keys():
+                                       gw = route['GatewayId']
+                                   if "NatGatewayId" in route.keys():
+                                       gw = route['NatGatewayId']
+                                   if "DestinationCidrBlock" in route.keys():
+                                       destination = route['DestinationCidrBlock']
+                                   if "DestinationPrefixListId" in route.keys():
+                                       destination = route['DestinationPrefixListId']
+                                       r = client.describe_prefix_lists(PrefixListIds = [destination])
+                                       detail = r['PrefixLists'][0]['PrefixListName']
+                                       #print (r)
 
-                    if attached_route_table == False:
-                        for routetable in routetables['RouteTables']:
-                            if routetable['VpcId'] == vpc['VpcId']:
-                                for association in routetable['Associations']:
-                                    if association["Main"]:
-                                        output.add(association['RouteTableId'] + " (main)<br>")
-                                        output.add('<table class="hosts">')
-                                        output.add_table(["Dest CIDR","GW"],type="header")
-                                        for route in routetable['Routes']:
-                                            gw = "-"
-                                            if "GatewayId" in route.keys():
-                                                gw = route['GatewayId']
-                                            if "NatGatewayId" in route.keys():
-                                                gw = route['NatGatewayId']
-                                        output.add_table([route['DestinationCidrBlock'],gw])
-                                        output.add('</table>')
-
-
-#                            attached_route_table = association['RouteTableId']
-
-
-
+                                   output.add_table([destination,gw,detail])
+                               output.add('</table>')
 
                     # Begin Network ACLs
                     output.add("<p class=\"subnet_category_header\">Network ACLs</p>")
@@ -150,26 +157,27 @@ def lambda_handler(event,context,debug="false"):
                             if aclassociation['SubnetId'] == subnet['SubnetId']:
                                 output.add(networkacl['NetworkAclId'])
                                 output.add("<table class=\"hosts\">")
-                                output.add_table(['Rule','Protocol','Ports','RuleAction','Egress','CidrBlock'],type="header")
+                                output.add_table(['Rule','Protocol','Ports','RuleAction','Direction','CidrBlock'],type="header")
 
                                 for entry in networkacl['Entries']:
-                                  rule_number = str(entry['RuleNumber'])
-                                  rule_action = str(entry['RuleAction'])
-                                  cidr = str(entry['CidrBlock'])
+                                   rule_number = str(entry['RuleNumber'])
+                                   rule_action = str(entry['RuleAction'])
+                                   cidr = str(entry['CidrBlock'])
 
-                                  port_range = "all"
-                                  if 'PortRange' in entry:
+                                   port_range = "all"
+                                   if 'PortRange' in entry:
                                       ports_from = str(entry['PortRange']['From'])
                                       ports_to = str(entry['PortRange']['To'])
                                       port_range = ports_from + "-" + ports_to
 
-                                  direction = "ingress"
-                                  if entry['Egress'] == True:
+                                   direction = "ingress"
+                                   if entry['Egress'] == True:
                                       direction == "egress"
                                       protocol = entry['Protocol']
                                       protocol = re.sub("-1","all",protocol)
                                       protocol = re.sub("6","tcp",protocol)
-                                      output.add_table([rule_number,protocol,port_range,rule_action,direction,cidr])
+
+                                   output.add_table([rule_number,protocol,port_range,rule_action,direction,cidr])
                                 output.add("</table>")
 
 
@@ -194,7 +202,7 @@ def lambda_handler(event,context,debug="false"):
 
                                 groups = ""
                                 for group in interface['Groups']:
-                                    groups = groups + group['GroupId']
+                                    groups = groups + "\n" + group['GroupId']
 
                                 platform = "linux"
                                 if i.platform:
@@ -212,7 +220,11 @@ def lambda_handler(event,context,debug="false"):
     output.add("</html>")
 
     body = output.render()
-    if debug == "true":
-        print (body)
+    #if debug == "true":
+    #    print (body)
     payload = { "statusCode": "200", "headers": {"Content-Type": "text/html"}, "body": body }
-    return(payload)
+    file = open("output.html","w")
+    file.write(body)
+    file.close()
+
+    #return(payload)
