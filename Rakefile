@@ -4,8 +4,8 @@
 tool_name = "ec2-looky-loo"
 cfn_stack_name = tool_name
 lambda_function_name = tool_name
+#lambda_css_s3_bucket="s3://4717-0977-7059-ec2-looky-loo/" # Ensure you keep this format with s3:// prefix and / suffix
 lambda_css_s3_bucket="s3://sdevenis-lambda/" # Ensure you keep this format with s3:// prefix and / suffix
-lambda_css_s3_bucket="s3://4717-0977-7059-ec2-looky-loo/" # Ensure you keep this format with s3:// prefix and / suffix
 
 # Variables you probably won't change
 project_dir = Dir.pwd

@@ -53,6 +53,7 @@ div.subnet {
 table.hosts {
 	border:0px;
 	width:99%;
+	white-space:pre
 	border-collapse:collapse;
 	font-family: helvetica;
 }
