@@ -3,20 +3,25 @@ import boto3
 import re
 from bs4 import BeautifulSoup
 
+# This class provides a simple framework for structring the html output
+# It maintains a index of label names, which can be appended to or rendedered
 class HtmlDoc(object):
     def __init__(self):
         self.index = dict()
         self.set_label()
 
+    # Print the curent labels (debugging)
     def print_labels(self):
         for label in self.index.iterkeys():
             print (label)
 
+    # Set the label
     def set_label(self,label="default"):
         if label not in self.index:
             self.index[label] = []
         self.label = label
 
+    # Bit of boilerplate for creating tables
     def add_table(self,content,type="row",style=""):
         label = self.label
         if not isinstance(content,list):
@@ -34,6 +39,7 @@ class HtmlDoc(object):
         payload = payload + "</tr>\n"
         self.index[label].append(payload)
 
+    # Adds content to the current label
     def add(self,content,type="line"):
         label = self.label
         if type == "line":
@@ -134,13 +140,10 @@ def lambda_handler(event,context,debug="false"):
                                                 gw = route['GatewayId']
                                             if "NatGatewayId" in route.keys():
                                                 gw = route['NatGatewayId']
-                                        output.add_table([route['DestinationCidrBlock'],gw])
+#                                        output.add_table([route['DestinationCidrBlock'],gw])
                                         output.add('</table>')
 
-
 #                            attached_route_table = association['RouteTableId']
-
-
 
 
                     # Begin Network ACLs

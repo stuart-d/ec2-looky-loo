@@ -49,10 +49,71 @@ div.subnet {
 	font-family: helvetica;
 }
 
+/* Customer
+*/
+div.subnet-ECCF {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#6699CC;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-ECIF {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#999999;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-MGMT {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#00CC99;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-IC {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#99CCFF;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+div.subnet-RES {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#CCFFCC;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-SEC {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#FF9999;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
 
 table.hosts {
 	border:0px;
 	width:99%;
+	white-space: pre;
 	border-collapse:collapse;
 	font-family: helvetica;
 }
