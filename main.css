@@ -1,0 +1,247 @@
+div.vpc {
+	border:2px solid;
+	float:left;
+	margin:10px;
+	padding:10px;
+	width:98%;
+	font-family: helvetica;
+}
+
+div.ap-southeast-2a {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#F9E79F;
+	margin:5px;
+	padding:10px;
+	float:left;
+	width:500px;
+	font-family: helvetica;
+}
+
+div.ap-southeast-2b {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#F7DC6F;
+	margin:5px;
+	padding:10px;
+	float:left;
+	width:500px;
+	font-family: helvetica;
+}
+div.ap-southeast-2c {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#F4D03F;
+	margin:5px;
+	padding:10px;
+	float:left;
+	width:500px;
+	font-family: helvetica;
+}
+
+div.subnet {
+	border:2px solid;
+	border-radius:25px;
+	background-color:white;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+/* Customer
+*/
+div.subnet-ECCF {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#6699CC;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-ECIF {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#999999;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-MGMT {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#00CC99;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-IC {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#99CCFF;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+div.subnet-RES {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#CCFFCC;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+div.subnet-SEC {
+	border:2px solid;
+	border-radius:25px;
+	background-color:#FF9999;
+	float:center;
+	padding:10px;
+	width:96%;
+	font-family: helvetica;
+}
+
+table.hosts {
+	border:0px;
+	width:99%;
+<<<<<<< HEAD
+	white-space: pre;
+=======
+	white-space:pre
+>>>>>>> 991575c93eca88ee87a55f90945f239365840e41
+	border-collapse:collapse;
+	font-family: helvetica;
+}
+
+table.tags {
+	border:0px;
+	width:99%;
+	vertical-align: top;
+	border-collapse:collapse;
+	font-family: helvetica;
+}
+td.tags {
+/*	background-color:#EEEEEE;
+ *	*/
+	text-align:left;
+	vertical-align: top;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+table.header {
+        border:0px;
+        width:99%;
+        border-collapse:collapse;
+        font-family: helvetica;
+}
+
+
+p.az_header {
+	font-weight:bold;
+	text-align:center;
+	font-family: helvetica;
+}
+
+p.subnet_header {
+	font-weight:bold;
+	text-align:center;
+	font-family: helvetica;
+}
+
+p.subnet_category_header {
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}
+
+p.tool_header {
+	font-size:40px;
+  font-weight:bold;
+  text-align:left;
+  font-family: helvetica;
+}
+
+p {
+  font-weight:bold;
+  text-align:left;
+  font-family: helvetica;
+}
+
+
+p.vpc_header {
+	font-size:20px;
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}
+
+th {
+	background-color:grey;
+	color: white;
+	text-align:left;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+td {
+/*	background-color:#EEEEEE;
+ *	*/
+	text-align:left;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+td.header {
+/*      background-color:#EEEEEE;
+ *       *      */
+        text-align:left;
+        border: none;
+        font-family: helvetica;
+        font-size:15px;
+}
+
+
+td.version {
+	text-align:right;
+	border: none;
+	font-family: helvetica;
+	font-size:12px;
+}
+
+
+div.elb {
+	border:2px solid;
+	margin-left:auto;
+	margin-right:auto;
+	padding:10px;
+	width:70%;
+	font-family: helvetica;
+}
+
+
+table.elb {
+	border:0px;
+	width:99%;
+	border-collapse:collapse;
+	font-family: helvetica;
+
+}
+
+p.elb_header {
+	font-size:20px;
+	font-weight:bold;
+	text-align:left;
+	font-family: helvetica;
+}
