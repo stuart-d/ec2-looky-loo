@@ -1,0 +1,11 @@
+[
+    {
+      "ParameterKey": "S3Bucket",
+      "ParameterValue": "sdevenis-lambda-code"
+    },
+    {
+      "ParameterKey": "S3File",
+      "ParameterValue": "ec2-looky-loo-lambda-code.zip"
+    }
+ 
+]

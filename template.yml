@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates Lambda function and associated API gateway endpoints for AWS map
+
+
+Parameters:
+
+  S3Bucket:
+    Type: String
+    Description: S3 Bucket Name
+
+  S3File:
+    Type: String
+    Description: S3 File Name
+
+Resources:
+    LambdaExecutionRole:
+        Type: 'AWS::IAM::Role'
+        Properties:
+            Path: /service-role/
+            ManagedPolicyArns:
+                - 'arn:aws:iam::aws:policy/service-role/AWSLambdaRole'
+                - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+                - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+                - 'arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess'
+                - 'arn:aws:iam::aws:policy/AmazonVPCReadOnlyAccess'
+            AssumeRolePolicyDocument:
+                Statement:
+                    - 
+                        Action:
+                            - 'sts:AssumeRole'
+                        Effect: Allow
+                        Principal:
+                            Service:
+                                - lambda.amazonaws.com
+                Version: '2012-10-17'
+    LambdaEc2LookyLoo:
+        Type: 'AWS::Lambda::Function'
+        Properties:
+            Description: This function reads AWS services and builds a html map as output
+            Role:
+                'Fn::GetAtt':
+                    - LambdaExecutionRole
+                    - Arn
+            FunctionName: ec2-looky-loo
+            Handler: ec2-looky-loo.lambda_handler
+            Runtime: python3.9
+            Timeout: '30'
+            Code:
+                S3Bucket: sdevenis-lambda-code
+                S3Key: ec2-looky-loo-lambda-code.zip
+        DependsOn: LambdaExecutionRole
+    RestAPI:
+        Type: 'AWS::ApiGateway::RestApi'
+        Properties:
+            Description: API acting as a pseudo web server for AWS-html-map-service
+            Name: AWSHtmlMap
+    MethodRootGET:
+        Type: 'AWS::ApiGateway::Method'
+        Properties:
+            ApiKeyRequired: 'false'
+            AuthorizationType: NONE
+            HttpMethod: GET
+            Integration:
+                Type: AWS_PROXY
+                IntegrationHttpMethod: POST
+                IntegrationResponses:
+                    - 
+                        StatusCode: '200'
+                        SelectionPattern: '.*'
+                    - 
+                        StatusCode: '400'
+                        SelectionPattern: BAD_REQUEST
+                    - 
+                        StatusCode: '401'
+                        SelectionPattern: NOT_AUTHORISED
+                    - 
+                        StatusCode: '403'
+                        SelectionPattern: FORBIDDEN
+                    - 
+                        StatusCode: '404'
+                        SelectionPattern: TASK_NOT_FOUND
+                    - 
+                        StatusCode: '500'
+                Uri:
+                    'Fn::Join':
+                        - ''
+                        - 
+                            - 'arn:aws:apigateway:'
+                            - 
+                                Ref: 'AWS::Region'
+                            - ':lambda:path/2015-03-31/functions/'
+                            - 
+                                'Fn::GetAtt':
+                                    - LambdaEc2LookyLoo
+                                    - Arn
+                            - /invocations
+            MethodResponses:
+                - 
+                    StatusCode: '200'
+                    ResponseModels:
+                        application/json: Empty
+                - 
+                    StatusCode: '400'
+                - 
+                    StatusCode: '401'
+                - 
+                    StatusCode: '403'
+                - 
+                    StatusCode: '404'
+                - 
+                    StatusCode: '500'
+            ResourceId:
+                'Fn::GetAtt':
+                    - RestAPI
+                    - RootResourceId
+            RestApiId:
+                Ref: RestAPI
+    ApiGatewayToLambdaPermission:
+        Type: 'AWS::Lambda::Permission'
+        Properties:
+            Action: 'lambda:InvokeFunction'
+            Principal: apigateway.amazonaws.com
+            FunctionName: ec2-looky-loo
+        DependsOn: LambdaEc2LookyLoo
+    Deployment:
+        Type: 'AWS::ApiGateway::Deployment'
+        DependsOn:
+            - MethodRootGET
+        Properties:
+            RestApiId:
+                Ref: RestAPI
+            StageName: prod
+Outputs:
+    URL:
+        Description: The URL to access ec2-looky-loo
+        Value:
+            'Fn::Join':
+                - ''
+                - 
+                    - 'https://'
+                    - 
+                        Ref: RestAPI
+                    - .execute-api.ap-southeast-2.amazonaws.com/prod
